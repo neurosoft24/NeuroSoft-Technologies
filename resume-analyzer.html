@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Resume Analyzer | NeuroSoft Technologies</title>
+<meta name="description" content="Upload a PDF resume to NeuroSoft's AI Resume Analyzer and get a real match score plus rewritten bullet points.">
+<link rel="canonical" href="https://neurosoft-technologies.netlify.app/resume-analyzer.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon-180x180.png">
+
+<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neurosoft-technologies.netlify.app/resume-analyzer.html">
+<meta property="og:site_name" content="NeuroSoft Technologies">
+<meta property="og:title" content="AI Resume Analyzer | NeuroSoft Technologies">
+<meta property="og:description" content="Upload a PDF resume to NeuroSoft's AI Resume Analyzer and get a real match score plus rewritten bullet points.">
+<meta property="og:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Resume Analyzer | NeuroSoft Technologies">
+<meta name="twitter:description" content="Upload a PDF resume to NeuroSoft's AI Resume Analyzer and get a real match score plus rewritten bullet points.">
+<meta name="twitter:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+  body { background: radial-gradient(circle at 50% 0%, #0a0f0a 0%, #000 80%); color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px; }
+  a.back { color:#00ff99; text-decoration:none; font-size:.9rem; align-self:flex-start; margin-bottom:20px; width:100%; max-width:760px; }
+  a.back:hover { text-shadow:0 0 8px #00ff99; }
+  .tag { color:#00ff99; letter-spacing:2px; font-size:.75rem; text-transform:uppercase; margin-bottom:8px; }
+  h1 { font-size:1.8rem; margin-bottom:6px; text-align:center; }
+  p.sub { color:#999; margin-bottom:28px; text-align:center; max-width:580px; font-size:.9rem; }
+  .wrap { width:100%; max-width:760px; display:flex; flex-direction:column; gap:16px; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .row{ grid-template-columns:1fr; } }
+  .panel { background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,153,0.25); border-radius:14px; padding:18px 20px; }
+  .panel label { display:block; color:#00ff99; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  textarea { width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(0,255,153,0.15); border-radius:8px; color:#eee; padding:12px; font-size:.83rem; font-family:inherit; resize:vertical; min-height:160px; outline:none; }
+  .btn { background:#00ff99; border:none; color:#001a0f; font-weight:600; padding:12px; border-radius:8px; cursor:pointer; width:100%; font-size:.9rem; }
+  .btn:hover { box-shadow:0 0 14px #00ff99; }
+  .score-panel { display:flex; align-items:center; gap:20px; }
+  .score-circle { width:88px; height:88px; border-radius:50%; border:5px solid #1a1a1a; display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:700; flex-shrink:0; position:relative; }
+  .score-circle span.pct::after{ content:'%'; font-size:.8rem; }
+  .score-text { font-size:.85rem; color:#ccc; line-height:1.5; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .tag-miss { background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.4); color:#ff8080; padding:4px 10px; border-radius:12px; font-size:.75rem; }
+  .tag-hit { background:rgba(0,255,153,0.1); border:1px solid rgba(0,255,153,0.35); color:#00ff99; padding:4px 10px; border-radius:12px; font-size:.75rem; }
+  .bullets li { margin-bottom:10px; font-size:.85rem; line-height:1.5; color:#ddd; }
+  .note { margin-top:24px; color:#555; font-size:.75rem; text-align:center; max-width:580px; }
+  .upload-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+  .upload-btn { background:rgba(0,255,153,0.1); border:1px solid #00ff99; color:#00ff99; padding:8px 14px; border-radius:8px; font-size:.8rem; cursor:pointer; transition:.2s; }
+  .upload-btn:hover { background:rgba(0,255,153,0.2); }
+  .file-name { color:#666; font-size:.75rem; }
+  .file-name.loaded { color:#00ff99; }
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<a class="back" href="index.html">&larr; Back to NeuroSoft</a>
+<div class="tag">Live Demo</div>
+<h1>AI Resume Analyzer & Enhancer</h1>
+<p class="sub">Paste your resume and a job description — get a match score, missing keywords, and rewritten bullet points tailored to the role.</p>
+
+<div class="wrap">
+  <div class="row">
+    <div class="panel">
+      <label>Your Resume</label>
+      <div class="upload-row">
+        <label class="upload-btn" for="pdfInput">📄 Upload PDF Resume</label>
+        <input type="file" id="pdfInput" accept="application/pdf" style="display:none;">
+        <span id="fileName" class="file-name">or paste text below</span>
+      </div>
+      <textarea id="resume" placeholder="Paste your resume text here, or upload a PDF above...">Managed a team and worked on projects involving data. Responsible for reports and communication with clients. Helped improve processes.</textarea>
+    </div>
+    <div class="panel">
+      <label>Job Description</label>
+      <textarea id="jd" placeholder="Paste the job description here...">We are looking for a Project Coordinator with experience in data analysis, client communication, stakeholder management, reporting, and process optimization. Familiarity with Excel and CRM tools is a plus. Strong leadership and team management skills required.</textarea>
+    </div>
+  </div>
+
+  <button class="btn" onclick="analyze()">Analyze & Enhance</button>
+
+  <div class="panel" id="scoreBlock" style="display:none;">
+    <label>Match Score</label>
+    <div class="score-panel">
+      <div class="score-circle" id="scoreCircle"><span class="pct" id="scoreNum">0</span></div>
+      <div class="score-text">This score reflects how closely your resume's language overlaps with the job description's key requirements.</div>
+    </div>
+    <div class="tags" id="tagList"></div>
+  </div>
+
+  <div class="panel" id="enhanceBlock" style="display:none;">
+    <label>Enhanced Bullet Points (tailored to this job)</label>
+    <ul class="bullets" id="bullets"></ul>
+  </div>
+</div>
+<p class="note">Runs entirely in your browser — keyword and phrase matching against the job description, plus rule-based rewriting into strong, tailored bullet points.</p>
+
+<script>
+const STOP = new Set(['the','and','a','an','of','to','in','on','for','with','is','are','as','by','at','be','this','that','we','our','you','your','will','have','has','it','or','from','looking','experience','skills','role','strong','plus']);
+
+function keywords(text){
+  return [...new Set(text.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2 && !STOP.has(w)))];
+}
+
+const actionVerbs = ['Led','Coordinated','Managed','Streamlined','Delivered','Drove','Optimized','Executed'];
+
+// Paste your Cloudflare Worker URL here after deploying (see setup guide).
+// Leave empty to run in offline/keyword-matching demo mode.
+const WORKER_URL = "";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+document.getElementById('pdfInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  const fileNameEl = document.getElementById('fileName');
+  if(!file) return;
+  fileNameEl.textContent = 'Reading ' + file.name + '...';
+  fileNameEl.classList.remove('loaded');
+  try {
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++){
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      fullText += content.items.map(it => it.str).join(' ') + '\n';
+    }
+    document.getElementById('resume').value = fullText.trim();
+    fileNameEl.textContent = '✓ Loaded ' + file.name;
+    fileNameEl.classList.add('loaded');
+  } catch(err){
+    fileNameEl.textContent = 'Could not read this PDF — try pasting text instead.';
+  }
+});
+
+function renderResult(score, matched, missing, bullets){
+  document.getElementById('scoreBlock').style.display = 'block';
+  document.getElementById('scoreNum').textContent = score;
+  const circle = document.getElementById('scoreCircle');
+  const color = score >= 60 ? '#00ff99' : score >= 35 ? '#ffcc00' : '#ff5c5c';
+  circle.style.borderColor = color;
+  circle.style.color = color;
+
+  const tagList = document.getElementById('tagList');
+  tagList.innerHTML = '';
+  matched.slice(0,6).forEach(h=>{
+    const s = document.createElement('span'); s.className='tag-hit'; s.textContent = '✓ ' + h; tagList.appendChild(s);
+  });
+  missing.slice(0,8).forEach(m=>{
+    const s = document.createElement('span'); s.className='tag-miss'; s.textContent = '+ ' + m; tagList.appendChild(s);
+  });
+
+  const bulletsEl = document.getElementById('bullets');
+  bulletsEl.innerHTML = '';
+  bullets.forEach(b=>{
+    const li = document.createElement('li');
+    li.textContent = b;
+    bulletsEl.appendChild(li);
+  });
+  document.getElementById('enhanceBlock').style.display = 'block';
+}
+
+function localAnalyze(resumeText, jdText){
+  const jdKeys = keywords(jdText);
+  const resumeLower = resumeText.toLowerCase();
+  const hits = jdKeys.filter(k => resumeLower.includes(k));
+  const misses = jdKeys.filter(k => !resumeLower.includes(k)).slice(0, 8);
+  const score = Math.round((hits.length / Math.max(jdKeys.length,1)) * 100);
+
+  const lines = resumeText.split(/\n|\.(?=\s|$)/).map(l=>l.trim()).filter(l=>l.length>8);
+  const missingToWeave = misses.slice(0,4);
+  const bullets = lines.slice(0,4).map((line, i)=>{
+    const verb = actionVerbs[i % actionVerbs.length];
+    let core = line.replace(/^(managed|worked on|responsible for|helped|did|handled)\s*/i,'').trim();
+    core = core.charAt(0).toLowerCase() + core.slice(1);
+    const weave = missingToWeave[i] ? `, leveraging ${missingToWeave[i]}` : '';
+    return `${verb} ${core}${weave}, directly supporting measurable team and business outcomes.`;
+  });
+
+  renderResult(score, hits.slice(0,6), misses, bullets);
+}
+
+function analyze(){
+  const resumeText = document.getElementById('resume').value;
+  const jdText = document.getElementById('jd').value;
+  if(!resumeText.trim() || !jdText.trim()) return;
+
+  if (WORKER_URL) {
+    document.getElementById('scoreBlock').style.display = 'block';
+    document.getElementById('scoreNum').textContent = '…';
+    fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'resume', resume: resumeText, jobDescription: jdText })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) throw new Error(data.error);
+      renderResult(data.score, data.matchedKeywords || [], data.missingKeywords || [], data.bullets || []);
+    })
+    .catch(() => localAnalyze(resumeText, jdText));
+  } else {
+    localAnalyze(resumeText, jdText);
+  }
+}
+</script>
+</body>
+</html>

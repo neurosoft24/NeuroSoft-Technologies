@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Voice Agent | NeuroSoft Technologies</title>
+<meta name="description" content="Speak naturally to NeuroSoft's AI voice agent to book an appointment and hear a real spoken reply back.">
+<link rel="canonical" href="https://neurosoft-technologies.netlify.app/voice-agent.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon-180x180.png">
+
+<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neurosoft-technologies.netlify.app/voice-agent.html">
+<meta property="og:site_name" content="NeuroSoft Technologies">
+<meta property="og:title" content="AI Voice Agent | NeuroSoft Technologies">
+<meta property="og:description" content="Speak naturally to NeuroSoft's AI voice agent to book an appointment and hear a real spoken reply back.">
+<meta property="og:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Voice Agent | NeuroSoft Technologies">
+<meta name="twitter:description" content="Speak naturally to NeuroSoft's AI voice agent to book an appointment and hear a real spoken reply back.">
+<meta name="twitter:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+  body { background: radial-gradient(circle at 50% 0%, #0a0f0a 0%, #000 80%); color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px; }
+  a.back { color:#00ff99; text-decoration:none; font-size:.9rem; align-self:flex-start; margin-bottom:20px; }
+  a.back:hover { text-shadow:0 0 8px #00ff99; }
+  .tag { color:#00ff99; letter-spacing:2px; font-size:.75rem; text-transform:uppercase; margin-bottom:8px; }
+  h1 { font-size:1.8rem; margin-bottom:6px; text-align:center; }
+  p.sub { color:#999; margin-bottom:28px; text-align:center; max-width:520px; font-size:.9rem; }
+  .panel { width:100%; max-width:480px; background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,153,0.25); border-radius:16px; padding:28px 20px; text-align:center; }
+  .mic-wrap { display:flex; justify-content:center; margin:10px 0 20px; }
+  #mic { width:88px; height:88px; border-radius:50%; background:rgba(0,255,153,0.1); border:2px solid #00ff99; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:2rem; transition:.2s; position:relative; }
+  #mic.listening { animation:pulse 1.2s infinite; background:rgba(0,255,153,0.25); }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(0,255,153,0.5);} 70%{box-shadow:0 0 0 20px rgba(0,255,153,0);} 100%{box-shadow:0 0 0 0 rgba(0,255,153,0);} }
+  #status { color:#00ff99; font-size:.85rem; margin-bottom:16px; min-height:20px; }
+  .transcript-box { background:rgba(0,0,0,0.3); border:1px solid rgba(0,255,153,0.15); border-radius:10px; padding:14px; text-align:left; min-height:70px; font-size:.88rem; color:#ccc; margin-bottom:14px; }
+  .transcript-box .label { color:#00ff99; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .fallback { display:flex; gap:8px; margin-top:4px; }
+  .fallback input { flex:1; background:transparent; border:1px solid rgba(0,255,153,0.3); border-radius:8px; padding:10px 12px; color:#fff; font-size:.85rem; outline:none; }
+  .fallback button { background:#00ff99; border:none; color:#001a0f; font-weight:600; padding:0 16px; border-radius:8px; cursor:pointer; }
+  .examples { color:#666; font-size:.75rem; margin-top:16px; line-height:1.6; }
+  .note { margin-top:20px; color:#555; font-size:.75rem; text-align:center; max-width:480px; }
+</style>
+</head>
+<body>
+<a class="back" href="index.html">&larr; Back to NeuroSoft</a>
+<div class="tag">Live Demo</div>
+<h1>AI Voice Agent</h1>
+<p class="sub">Speak naturally — book an appointment, ask for hours, or check your order, and hear the reply back.</p>
+
+<div class="panel">
+  <div id="status">Tap the mic and speak</div>
+  <div class="mic-wrap"><button id="mic">🎤</button></div>
+
+  <div class="transcript-box">
+    <span class="label">You said</span>
+    <span id="heard">—</span>
+  </div>
+  <div class="transcript-box">
+    <span class="label">Agent replied</span>
+    <span id="replied">—</span>
+  </div>
+
+  <div class="fallback">
+    <input id="typed" placeholder="No mic? Type instead...">
+    <button id="typedBtn">Send</button>
+  </div>
+  <div class="examples">Try: "book an appointment for tomorrow at 5" · "what are your hours" · "where are you located"</div>
+</div>
+<p class="note">Uses your browser's built-in speech recognition and voice synthesis — nothing is recorded or sent anywhere.</p>
+
+<script>
+const heardEl = document.getElementById('heard');
+const repliedEl = document.getElementById('replied');
+const statusEl = document.getElementById('status');
+const micBtn = document.getElementById('mic');
+
+// Paste your Cloudflare Worker URL here after deploying (see setup guide).
+// Leave empty to run in offline/rule-based demo mode.
+const WORKER_URL = "";
+let voiceHistory = [];
+
+function localRespond(text){
+  const t = text.toLowerCase();
+  if (t.includes('appointment') || t.includes('book')) return "Sure, I can book that for you. What day and time works best?";
+  if (t.includes('hour') || t.includes('open') || t.includes('close')) return "We're open Monday to Saturday, 10 AM to 9 PM.";
+  if (t.includes('location') || t.includes('where')) return "We're located on Main Boulevard, near the city center.";
+  if (t.includes('order') || t.includes('status')) return "Let me check that for you, could you share your order number?";
+  if (t.includes('price') || t.includes('cost')) return "Pricing depends on the service, tell me what you're looking for and I'll quote you.";
+  if (t.includes('thank')) return "You're welcome! Anything else I can help with?";
+  return "Got it. Let me connect you with the right information, could you tell me a bit more?";
+}
+
+function speak(text){
+  if (!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 1; u.pitch = 1;
+  window.speechSynthesis.speak(u);
+}
+
+function handleUtterance(text){
+  heardEl.textContent = text;
+  repliedEl.textContent = '...';
+
+  if (WORKER_URL) {
+    fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'voice', message: text, history: voiceHistory })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const reply = data.reply || localRespond(text);
+      repliedEl.textContent = reply;
+      speak(reply);
+      voiceHistory.push({ role: 'user', content: text });
+      voiceHistory.push({ role: 'assistant', content: reply });
+    })
+    .catch(() => {
+      const reply = localRespond(text);
+      repliedEl.textContent = reply;
+      speak(reply);
+    });
+  } else {
+    const reply = localRespond(text);
+    repliedEl.textContent = reply;
+    speak(reply);
+  }
+}
+
+document.getElementById('typedBtn').onclick = ()=>{
+  const v = document.getElementById('typed').value.trim();
+  if(v){ handleUtterance(v); document.getElementById('typed').value=''; }
+};
+document.getElementById('typed').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){ document.getElementById('typedBtn').click(); }
+});
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR){
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.interimResults = false;
+  let listening = false;
+
+  micBtn.addEventListener('click', ()=>{
+    if (listening) return;
+    listening = true;
+    micBtn.classList.add('listening');
+    statusEl.textContent = 'Listening...';
+    rec.start();
+  });
+  rec.onresult = (e)=>{
+    const text = e.results[0][0].transcript;
+    handleUtterance(text);
+  };
+  rec.onend = ()=>{
+    listening = false;
+    micBtn.classList.remove('listening');
+    statusEl.textContent = 'Tap the mic and speak';
+  };
+  rec.onerror = ()=>{
+    listening = false;
+    micBtn.classList.remove('listening');
+    statusEl.textContent = 'Mic unavailable — try typing below';
+  };
+} else {
+  statusEl.textContent = 'Voice input not supported in this browser — type below instead';
+  micBtn.style.opacity = 0.4;
+  micBtn.style.cursor = 'not-allowed';
+}
+</script>
+</body>
+</html>

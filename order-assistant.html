@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Order & Booking Assistant | NeuroSoft Technologies</title>
+<meta name="description" content="Try NeuroSoft's WhatsApp-style order bot — takes a full order end-to-end: menu, quantity, address, and confirmation.">
+<link rel="canonical" href="https://neurosoft-technologies.netlify.app/order-assistant.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon-180x180.png">
+
+<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neurosoft-technologies.netlify.app/order-assistant.html">
+<meta property="og:site_name" content="NeuroSoft Technologies">
+<meta property="og:title" content="AI Order & Booking Assistant | NeuroSoft Technologies">
+<meta property="og:description" content="Try NeuroSoft's WhatsApp-style order bot — takes a full order end-to-end: menu, quantity, address, and confirmation.">
+<meta property="og:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Order & Booking Assistant | NeuroSoft Technologies">
+<meta name="twitter:description" content="Try NeuroSoft's WhatsApp-style order bot — takes a full order end-to-end: menu, quantity, address, and confirmation.">
+<meta name="twitter:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+  body { background: radial-gradient(circle at 50% 0%, #0a0f0a 0%, #000 80%); color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px; }
+  a.back { color:#00ff99; text-decoration:none; font-size:.9rem; align-self:flex-start; margin-bottom:20px; }
+  a.back:hover { text-shadow:0 0 8px #00ff99; }
+  .tag { color:#00ff99; letter-spacing:2px; font-size:.75rem; text-transform:uppercase; margin-bottom:8px; }
+  h1 { font-size:1.8rem; margin-bottom:6px; text-align:center; }
+  p.sub { color:#999; margin-bottom:28px; text-align:center; max-width:520px; font-size:.9rem; }
+  .phone { width:100%; max-width:400px; background:#0b141a; border:1px solid rgba(0,255,153,0.25); border-radius:20px; overflow:hidden; box-shadow:0 0 40px rgba(0,255,153,0.06); }
+  .wa-head { background:#1f2c34; padding:14px 16px; display:flex; align-items:center; gap:10px; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:#00ff99; display:flex; align-items:center; justify-content:center; font-weight:700; color:#001a0f; }
+  .wa-head div span { display:block; }
+  .wa-head .name { font-weight:600; font-size:.9rem; }
+  .wa-head .status { font-size:.72rem; color:#8fa; opacity:.8; }
+  #chat { height:440px; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px; background:linear-gradient(#0b141a,#0b1a14); }
+  .bubble { max-width:78%; padding:8px 12px; border-radius:10px; font-size:.85rem; line-height:1.4; animation:pop .2s ease; }
+  @keyframes pop { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+  .bot { background:#1f2c34; color:#eee; align-self:flex-start; border-top-left-radius:2px; }
+  .user { background:#005c4b; color:#fff; align-self:flex-end; border-top-right-radius:2px; }
+  .opt { display:flex; flex-wrap:wrap; gap:6px; padding:2px 14px 12px; }
+  .opt button { background:transparent; border:1px solid #00ff99; color:#00ff99; padding:6px 10px; border-radius:16px; font-size:.75rem; cursor:pointer; }
+  .opt button:hover { background:rgba(0,255,153,0.12); }
+  form { display:flex; border-top:1px solid rgba(255,255,255,0.08); }
+  input { flex:1; background:transparent; border:none; padding:12px 14px; color:#fff; font-size:.85rem; outline:none; }
+  input::placeholder { color:#666; }
+  button.send { background:#00ff99; border:none; color:#001a0f; font-weight:600; padding:0 20px; cursor:pointer; }
+  .note { margin-top:20px; color:#555; font-size:.75rem; text-align:center; max-width:480px; }
+</style>
+</head>
+<body>
+<a class="back" href="index.html">&larr; Back to NeuroSoft</a>
+<div class="tag">Live Demo</div>
+<h1>AI Order & Booking Assistant</h1>
+<p class="sub">A WhatsApp-style bot that takes orders end-to-end — no human needed until the order's confirmed.</p>
+
+<div class="phone">
+  <div class="wa-head">
+    <div class="avatar">R</div>
+    <div><span class="name">Rosti Cafe — Order Bot</span><span class="status">online</span></div>
+  </div>
+  <div id="chat"></div>
+  <div class="opt" id="opts"></div>
+  <form id="f">
+    <input id="in" placeholder="Type a message..." autocomplete="off">
+    <button class="send" type="submit">➤</button>
+  </form>
+</div>
+<p class="note">Demo simulates a small cafe's order flow — menu, quantity, address, and confirmation — as a state-driven conversation.</p>
+
+<script>
+const menu = { 1:{name:'Zinger Burger', price:650}, 2:{name:'Chicken Karahi (half)', price:1200}, 3:{name:'Cold Coffee', price:350} };
+let state = 'greet';
+let order = { item:null, qty:null, address:null };
+
+const chat = document.getElementById('chat');
+const optsEl = document.getElementById('opts');
+
+function addMsg(text, who){
+  const d = document.createElement('div');
+  d.className = 'bubble ' + who;
+  d.textContent = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+function setOpts(list){
+  optsEl.innerHTML = '';
+  list.forEach(l=>{
+    const b = document.createElement('button');
+    b.textContent = l;
+    b.onclick = ()=> handleInput(l);
+    optsEl.appendChild(b);
+  });
+}
+
+function botSay(text, delay=500){
+  setTimeout(()=> addMsg(text, 'bot'), delay);
+}
+
+function handleInput(raw){
+  const text = raw.trim();
+  if(!text) return;
+  addMsg(text, 'user');
+  optsEl.innerHTML = '';
+
+  if(state === 'greet'){
+    let menuText = "Here's our menu:\n" + Object.entries(menu).map(([k,v])=>`${k}. ${v.name} — Rs.${v.price}`).join('\n');
+    botSay(menuText, 400);
+    setTimeout(()=> setOpts(['1','2','3']), 600);
+    state = 'choose';
+    return;
+  }
+  if(state === 'choose'){
+    const id = text.match(/\d/) ? text.match(/\d/)[0] : null;
+    if(id && menu[id]){
+      order.item = menu[id];
+      botSay(`Great choice — ${order.item.name}. How many would you like?`, 400);
+      setTimeout(()=> setOpts(['1','2','3']), 600);
+      state = 'qty';
+    } else {
+      botSay("Please pick 1, 2, or 3 from the menu above.", 400);
+    }
+    return;
+  }
+  if(state === 'qty'){
+    const q = parseInt(text.match(/\d+/));
+    if(q && q > 0){
+      order.qty = q;
+      botSay("Got it. What's the delivery address?", 400);
+      state = 'address';
+    } else {
+      botSay("Just send me a number, like 1 or 2.", 400);
+    }
+    return;
+  }
+  if(state === 'address'){
+    order.address = text;
+    const total = order.item.price * order.qty;
+    botSay(`Order Summary:\n${order.qty} x ${order.item.name} = Rs.${total}\nDeliver to: ${order.address}\n\nConfirm order?`, 400);
+    setTimeout(()=> setOpts(['Confirm ✅', 'Cancel ❌']), 700);
+    state = 'confirm';
+    return;
+  }
+  if(state === 'confirm'){
+    if(text.toLowerCase().includes('confirm')){
+      botSay("Order confirmed! 🎉 Estimated delivery: 35–40 mins. Thank you for ordering!", 400);
+    } else {
+      botSay("No worries, order cancelled. Type anything to start again.", 400);
+    }
+    state = 'greet'; order = { item:null, qty:null, address:null };
+    return;
+  }
+}
+
+document.getElementById('f').addEventListener('submit', e=>{
+  e.preventDefault();
+  const inp = document.getElementById('in');
+  handleInput(inp.value);
+  inp.value = '';
+});
+
+botSay("Hi! Welcome to Rosti Cafe 🍔 Type anything to see today's menu.", 300);
+</script>
+</body>
+</html>

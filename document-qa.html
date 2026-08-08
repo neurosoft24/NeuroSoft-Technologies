@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Document Q&A Assistant | NeuroSoft Technologies</title>
+<meta name="description" content="Paste any policy or FAQ document into NeuroSoft's Document Q&A Assistant and get instant, accurate answers.">
+<link rel="canonical" href="https://neurosoft-technologies.netlify.app/document-qa.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon-180x180.png">
+
+<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neurosoft-technologies.netlify.app/document-qa.html">
+<meta property="og:site_name" content="NeuroSoft Technologies">
+<meta property="og:title" content="AI Document Q&A Assistant | NeuroSoft Technologies">
+<meta property="og:description" content="Paste any policy or FAQ document into NeuroSoft's Document Q&A Assistant and get instant, accurate answers.">
+<meta property="og:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Document Q&A Assistant | NeuroSoft Technologies">
+<meta name="twitter:description" content="Paste any policy or FAQ document into NeuroSoft's Document Q&A Assistant and get instant, accurate answers.">
+<meta name="twitter:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+  body { background: radial-gradient(circle at 50% 0%, #0a0f0a 0%, #000 80%); color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px; }
+  a.back { color:#00ff99; text-decoration:none; font-size:.9rem; align-self:flex-start; margin-bottom:20px; width:100%; max-width:700px; }
+  a.back:hover { text-shadow:0 0 8px #00ff99; }
+  .tag { color:#00ff99; letter-spacing:2px; font-size:.75rem; text-transform:uppercase; margin-bottom:8px; }
+  h1 { font-size:1.8rem; margin-bottom:6px; text-align:center; }
+  p.sub { color:#999; margin-bottom:28px; text-align:center; max-width:560px; font-size:.9rem; }
+  .wrap { width:100%; max-width:700px; display:flex; flex-direction:column; gap:16px; }
+  .panel { background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,153,0.25); border-radius:14px; padding:18px 20px; }
+  .panel label { display:block; color:#00ff99; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  textarea { width:100%; background:rgba(0,0,0,0.3); border:1px solid rgba(0,255,153,0.15); border-radius:8px; color:#eee; padding:12px; font-size:.85rem; font-family:inherit; resize:vertical; min-height:110px; outline:none; }
+  .presets { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .presets button { background:transparent; border:1px solid rgba(0,255,153,0.35); color:#00ff99; padding:6px 12px; border-radius:16px; font-size:.75rem; cursor:pointer; }
+  .presets button:hover { background:rgba(0,255,153,0.12); }
+  .ask-row { display:flex; gap:10px; }
+  .ask-row input { flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(0,255,153,0.15); border-radius:8px; padding:12px; color:#fff; font-size:.85rem; outline:none; }
+  .ask-row button { background:#00ff99; border:none; color:#001a0f; font-weight:600; padding:0 22px; border-radius:8px; cursor:pointer; }
+  .answer { background:rgba(0,255,153,0.06); border:1px solid rgba(0,255,153,0.3); border-radius:10px; padding:14px; font-size:.88rem; line-height:1.5; min-height:24px; }
+  .answer .src { display:block; color:#666; font-size:.72rem; margin-top:8px; }
+  .note { margin-top:24px; color:#555; font-size:.75rem; text-align:center; max-width:560px; }
+</style>
+</head>
+<body>
+<a class="back" href="index.html">&larr; Back to NeuroSoft</a>
+<div class="tag">Live Demo</div>
+<h1>AI Document Q&A Assistant</h1>
+<p class="sub">Paste any policy, FAQ, or product document — then ask questions and get instant, sourced answers.</p>
+
+<div class="wrap">
+  <div class="panel">
+    <label>Document</label>
+    <textarea id="doc"></textarea>
+    <div class="presets">
+      <button onclick="loadSample('returns')">Load: Return Policy</button>
+      <button onclick="loadSample('hr')">Load: HR Leave Policy</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <label>Ask a question</label>
+    <div class="ask-row">
+      <input id="q" placeholder="e.g. How many days do I have to return an item?">
+      <button onclick="answer()">Ask</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <label>Answer</label>
+    <div class="answer" id="ans">Ask a question above to see the AI pull the answer directly from your document.</div>
+  </div>
+</div>
+<p class="note">Runs an in-browser relevance-matching engine that scans your document and extracts the most relevant sentence — the same core idea behind retrieval-based AI assistants.</p>
+
+<script>
+const samples = {
+  returns: `Return & Refund Policy — NeuroSoft Retail
+
+Customers may return any unused item within 7 days of delivery for a full refund. Items must be in their original packaging with tags attached. Refunds are processed within 5 business days after we receive the returned item. Sale items and personalized products are not eligible for return. Exchanges are allowed for a different size or color within the same 7-day window. Shipping costs for returns are the customer's responsibility unless the item arrived damaged or incorrect. To start a return, contact our support team with your order number.`,
+  hr: `Employee Leave Policy — NeuroSoft Technologies
+
+Full-time employees are entitled to 18 paid leave days per year, accrued monthly. Sick leave of up to 10 days per year does not require prior approval but must be reported on the same day. Leave requests must be submitted at least 3 working days in advance through the HR portal. Unused annual leave can be carried forward up to 5 days into the next year. Maternity leave is 12 weeks paid; paternity leave is 2 weeks paid. Employees on probation are not eligible for annual leave in the first 3 months.`
+};
+function loadSample(key){ document.getElementById('doc').value = samples[key]; }
+loadSample('returns');
+
+// Paste your Cloudflare Worker URL here after deploying (see setup guide).
+// Leave empty to run in offline/keyword-matching demo mode.
+const WORKER_URL = "";
+
+function splitSentences(text){
+  return text.replace(/\n/g,' ').split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);
+}
+
+function localAnswer(doc, q){
+  const sentences = splitSentences(doc);
+  const qWords = q.toLowerCase().replace(/[?.!,]/g,'').split(/\s+/).filter(w=>w.length>2);
+  let best = null, bestScore = 0;
+  sentences.forEach(s=>{
+    const sLower = s.toLowerCase();
+    let score = 0;
+    qWords.forEach(w=>{ if(sLower.includes(w)) score++; });
+    if(score > bestScore){ bestScore = score; best = s; }
+  });
+  return bestScore > 0 ? best : "I couldn't find that in the document — try rephrasing, or check if it's covered at all.";
+}
+
+function answer(){
+  const doc = document.getElementById('doc').value;
+  const q = document.getElementById('q').value.trim();
+  const ansEl = document.getElementById('ans');
+  if(!doc || !q){ ansEl.textContent = "Add a document and a question first."; return; }
+
+  if (WORKER_URL) {
+    ansEl.textContent = "Thinking...";
+    fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'docqa', document: doc, question: q })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const reply = data.reply || localAnswer(doc, q);
+      ansEl.innerHTML = reply + '<span class="src">Answered by AI, grounded in your document</span>';
+    })
+    .catch(() => {
+      ansEl.innerHTML = localAnswer(doc, q) + '<span class="src">Source: matched sentence from your document</span>';
+    });
+  } else {
+    ansEl.innerHTML = localAnswer(doc, q) + '<span class="src">Source: matched sentence from your document</span>';
+  }
+}
+document.getElementById('q').addEventListener('keydown', e=>{ if(e.key==='Enter') answer(); });
+</script>
+</body>
+</html>

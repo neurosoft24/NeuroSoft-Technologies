@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Support Chatbot | NeuroSoft Technologies</title>
+<meta name="description" content="Try NeuroSoft's live AI support chatbot — understands real customer questions and answers naturally, not from a fixed script.">
+<link rel="canonical" href="https://neurosoft-technologies.netlify.app/chatbot.html">
+
+<!-- Favicon -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon-180x180.png">
+
+<!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neurosoft-technologies.netlify.app/chatbot.html">
+<meta property="og:site_name" content="NeuroSoft Technologies">
+<meta property="og:title" content="AI Support Chatbot | NeuroSoft Technologies">
+<meta property="og:description" content="Try NeuroSoft's live AI support chatbot — understands real customer questions and answers naturally, not from a fixed script.">
+<meta property="og:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Support Chatbot | NeuroSoft Technologies">
+<meta name="twitter:description" content="Try NeuroSoft's live AI support chatbot — understands real customer questions and answers naturally, not from a fixed script.">
+<meta name="twitter:image" content="https://neurosoft-technologies.netlify.app/og-image.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+  body { background: radial-gradient(circle at 50% 0%, #0a0f0a 0%, #000 80%); color:#fff; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 16px; }
+  a.back { color:#00ff99; text-decoration:none; font-size:.9rem; align-self:flex-start; margin-bottom:20px; }
+  a.back:hover { text-shadow:0 0 8px #00ff99; }
+  .tag { color:#00ff99; letter-spacing:2px; font-size:.75rem; text-transform:uppercase; margin-bottom:8px; }
+  h1 { font-size:1.8rem; margin-bottom:6px; text-align:center; }
+  p.sub { color:#999; margin-bottom:28px; text-align:center; max-width:520px; font-size:.9rem; }
+  .panel { width:100%; max-width:480px; background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,153,0.25); border-radius:16px; overflow:hidden; box-shadow:0 0 40px rgba(0,255,153,0.05); }
+  .panel-head { padding:14px 18px; background:rgba(0,255,153,0.07); border-bottom:1px solid rgba(0,255,153,0.2); display:flex; align-items:center; gap:10px; }
+  .dot { width:10px; height:10px; border-radius:50%; background:#00ff99; box-shadow:0 0 8px #00ff99; }
+  .panel-head span { font-weight:600; font-size:.95rem; }
+  #chat { height:420px; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:80%; padding:10px 14px; border-radius:14px; font-size:.88rem; line-height:1.4; animation:pop .2s ease; }
+  @keyframes pop { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+  .bot { background:rgba(0,255,153,0.1); border:1px solid rgba(0,255,153,0.25); align-self:flex-start; border-bottom-left-radius:4px; }
+  .user { background:#00ff99; color:#001a0f; align-self:flex-end; border-bottom-right-radius:4px; font-weight:500; }
+  .typing { align-self:flex-start; display:flex; gap:4px; padding:10px 14px; }
+  .typing span { width:6px; height:6px; background:#00ff99; border-radius:50%; animation:blink 1.2s infinite; }
+  .typing span:nth-child(2){animation-delay:.2s;} .typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink { 0%,100%{opacity:.2;} 50%{opacity:1;} }
+  form { display:flex; border-top:1px solid rgba(0,255,153,0.2); }
+  input { flex:1; background:transparent; border:none; padding:14px 16px; color:#fff; font-size:.9rem; outline:none; }
+  input::placeholder { color:#666; }
+  button { background:#00ff99; border:none; color:#001a0f; font-weight:600; padding:0 22px; cursor:pointer; transition:.2s; }
+  button:hover { box-shadow:0 0 14px #00ff99; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; padding:0 16px 14px; }
+  .chip { border:1px solid rgba(0,255,153,0.35); color:#00ff99; padding:6px 12px; border-radius:20px; font-size:.78rem; cursor:pointer; background:transparent; transition:.2s; }
+  .chip:hover { background:rgba(0,255,153,0.12); }
+  .note { margin-top:20px; color:#555; font-size:.75rem; text-align:center; max-width:480px; }
+</style>
+</head>
+<body>
+<a class="back" href="index.html">&larr; Back to NeuroSoft</a>
+<div class="tag" id="modeTag">Live Demo</div>
+<h1>AI Customer Support Chatbot</h1>
+<p class="sub">Built to answer real customer questions instantly — try asking about orders, pricing, returns, or hours below.</p>
+
+<div class="panel">
+  <div class="panel-head"><div class="dot"></div><span>NeuroBot — Support Assistant</span></div>
+  <div id="chat"></div>
+  <div class="chips">
+    <button class="chip" onclick="ask('What are your business hours?')">Business hours</button>
+    <button class="chip" onclick="ask('What is your return policy?')">Return policy</button>
+    <button class="chip" onclick="ask('Do you offer discounts?')">Discounts</button>
+  </div>
+  <form id="f">
+    <input id="in" placeholder="Type your question..." autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+</div>
+<p class="note">Demo runs entirely in your browser using a custom intent-matching engine — no data leaves this page.</p>
+
+<script>
+const KB = [
+  { keys:['hour','open','close','timing'], reply:"We're open Monday–Saturday, 10 AM to 9 PM. Closed on Sundays." },
+  { keys:['return','refund','exchange'], reply:"You can return any item within 7 days of delivery, unused and in original packaging, for a full refund." },
+  { keys:['discount','sale','offer','coupon'], reply:"Yes! Use code WELCOME10 for 10% off your first order. We also run seasonal sales — worth checking back often." },
+  { keys:['shipping','delivery','deliver'], reply:"Standard delivery takes 2–4 business days across Pakistan. Express delivery (next day) is available in major cities." },
+  { keys:['price','cost','how much'], reply:"Pricing depends on the product — could you tell me which item you're asking about?" },
+  { keys:['order','track','status'], reply:"You can track your order using the tracking ID sent to your email after checkout. Want me to look one up?" },
+  { keys:['contact','human','agent','talk to'], reply:"Sure — you can reach our team directly on WhatsApp, or I can keep helping if you tell me more about the issue." },
+  { keys:['hi','hello','hey','salam'], reply:"Hey there! 👋 I'm NeuroBot. Ask me anything about orders, returns, pricing, or hours." },
+];
+
+function findReply(text){
+  const t = text.toLowerCase();
+  for (const item of KB){
+    if (item.keys.some(k => t.includes(k))) return item.reply;
+  }
+  return "I didn't quite catch that — could you rephrase, or ask about hours, returns, pricing, or shipping?";
+}
+
+const chat = document.getElementById('chat');
+function addMsg(text, who){
+  const d = document.createElement('div');
+  d.className = 'msg ' + who;
+  d.textContent = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+function showTyping(){
+  const d = document.createElement('div');
+  d.className = 'typing'; d.id = 'typing-ind';
+  d.innerHTML = '<span></span><span></span><span></span>';
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+function hideTyping(){ const t = document.getElementById('typing-ind'); if(t) t.remove(); }
+
+// ===== CONFIG =====
+// Paste your Cloudflare Worker URL here after deploying (see setup guide).
+// Leave empty to run in offline/rule-based demo mode.
+const WORKER_URL = "";
+// ==================
+
+let conversationHistory = [];
+
+function ask(text){
+  addMsg(text, 'user');
+  showTyping();
+
+  if (WORKER_URL) {
+    fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'chat', message: text, history: conversationHistory })
+    })
+    .then(res => res.json())
+    .then(data => {
+      hideTyping();
+      const reply = data.reply || findReply(text);
+      addMsg(reply, 'bot');
+      conversationHistory.push({ role: 'user', content: text });
+      conversationHistory.push({ role: 'assistant', content: reply });
+    })
+    .catch(() => {
+      hideTyping();
+      addMsg(findReply(text), 'bot');
+    });
+  } else {
+    setTimeout(()=>{
+      hideTyping();
+      addMsg(findReply(text), 'bot');
+    }, 650 + Math.random()*400);
+  }
+}
+
+document.getElementById('f').addEventListener('submit', e=>{
+  e.preventDefault();
+  const inp = document.getElementById('in');
+  if(!inp.value.trim()) return;
+  ask(inp.value.trim());
+  inp.value = '';
+});
+
+addMsg("Hey there! 👋 I'm NeuroBot, your AI support assistant. Ask me about orders, returns, pricing, or hours.", 'bot');
+
+document.getElementById('modeTag').textContent = WORKER_URL ? 'Live Demo — Powered by AI' : 'Live Demo — Offline Mode';
+</script>
+</body>
+</html>

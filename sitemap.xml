@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://neurosoft-technologies.netlify.app/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://neurosoft-technologies.netlify.app/chatbot.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://neurosoft-technologies.netlify.app/order-assistant.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://neurosoft-technologies.netlify.app/voice-agent.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://neurosoft-technologies.netlify.app/document-qa.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://neurosoft-technologies.netlify.app/resume-analyzer.html</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>
